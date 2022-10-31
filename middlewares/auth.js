@@ -3,9 +3,8 @@ const jwt = require('jsonwebtoken');
 exports.authenticateToken = async(req, res, next) => {
     // validating token in headers
     const existToken = req.headers['access-token'];
-    if(!existToken) res.status(401).send({msg: 'Unauthorized: Token not found'});
-
-    // token verification
+    if(!existToken) return res.status(401).send({msg: 'Unauthorized: Token not found'});
+    
     try {
         req.body.tokenData = jwt.verify(existToken, process.env.JWT_SECRET);
         next();        

@@ -3,6 +3,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const userController = require('./controllers/user');
+const auth = require('./middlewares/auth');
+
 
 const app = express();
 app.use(express.json());
@@ -23,7 +25,7 @@ app.get('/', async(req, res) => {
 app.post('/signup', userController.signup);
 app.post('/login', userController.login);
 app.patch('/forgetpassword', userController.forgetPassword);
-
+app.post('/mailsend', auth.authenticateToken, userController.sendMail)
 
 
 mongoose.connect(URL, () => {
