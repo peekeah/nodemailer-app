@@ -22,6 +22,7 @@ app.get('/', async(req, res) => {
 
 app.post('/signup', userController.signup);
 app.post('/login', userController.login);
+app.patch('/forgetpassword', userController.forgetPassword);
 
 
 
