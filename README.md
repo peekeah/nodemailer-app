@@ -23,7 +23,8 @@
 
 
 #### Create User
-* `POST /signup`: signup &nbsp;
+`POST /signup`: signup
+
 `Body`: 
 ```
 {
@@ -34,17 +35,19 @@
 ```
 
 #### Login
-* `POST /login`: Login &nbsp;
+`POST /login`: Login
+
 `Body`: 
 ```
 {
-    "email": "yourname@example.com",g
+    "email": "yourname@example.com",
     "password": "your password"
 }
 ```
 
 #### Reset Password
-* `PUT /forgetpassword`: Reset Password
+`PUT /forgetpassword`: Reset Password
+
 `Body`: 
 ```
 {
@@ -53,7 +56,8 @@
 ```
 
 #### Send Mail
-* `POST /mailsend`: Send Mail &nbsp;
+`POST /mailsend`: Send Mail
+
 `Body`: 
 ```
 {
