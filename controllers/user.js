@@ -5,6 +5,7 @@ const nodeMailer = require("nodemailer");
 const shortid = require("shortid");
 const smtpTransport = require("nodemailer-smtp-transport");
 
+
 exports.signup = async (req, res) => {
     try {
         // Hashing Password
@@ -35,7 +36,7 @@ exports.login = async (req, res) => {
         expiresIn: process.env.JWT_EXPIRY || "1h",
         });
 
-        res.send(token);
+        res.send({ authKey: token });
     } catch (err) {
         console.log(err);
         res.status(403).send({ msg: err.message });
@@ -68,12 +69,12 @@ exports.sendMail = async (req, res) => {
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-            res.status(403).send(error);
-        } else {
-            res.send({ msg: "mail sent successfully" });
-        }
+            if (error) {
+                console.log(error);
+                res.status(403).send(error);
+            } else {
+                res.send({ msg: "mail sent successfully" });
+            }
         });
     } catch (err) {
         console.log(err);
@@ -107,6 +108,9 @@ exports.forgetPassword = async (req, res) => {
                     user: process.env.MAIL_USERNAME,
                     pass: process.env.MAIL_PASSWORD,
                 },
+                tls: {
+                    rejectUnauthorized: false
+                }
             })
             );
     
@@ -118,12 +122,12 @@ exports.forgetPassword = async (req, res) => {
             };
     
             transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.log(error);
-                res.status(403).send(error);
-            } else {
-                res.send({ msg: 'New password has been sent to your email' });
-            }
+                if (error) {
+                    console.log(error);
+                    res.status(403).send(error);
+                } else {
+                    res.send({ msg: 'New password has been sent to your email' });
+                }
             });
 
     } catch (err) {
