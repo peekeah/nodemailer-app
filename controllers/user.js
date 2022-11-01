@@ -54,14 +54,17 @@ exports.sendMail = async (req, res) => {
             user: process.env.MAIL_USERNAME,
             pass: process.env.MAIL_PASSWORD,
             },
+            tls: {
+                rejectUnauthorized: false
+            }
         })
         );
 
         let mailOptions = {
-        from: process.env.MAIL_USERNAME, // sender address
-        to: req.body.email, // list of receivers
-        subject: req.body.subject || "", // Subject line
-        text: req.body.text || "", // plain text body
+            from: process.env.MAIL_USERNAME, // sender address
+            to: req.body.receiverEmail, // list of receivers
+            subject: req.body.subject || "", // Subject line
+            text: req.body.text || "", // plain text body
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -69,7 +72,7 @@ exports.sendMail = async (req, res) => {
             console.log(error);
             res.status(403).send(error);
         } else {
-            res.send("mail sent successfully");
+            res.send({ msg: "mail sent successfully" });
         }
         });
     } catch (err) {
