@@ -86,7 +86,6 @@ exports.forgetPassword = async (req, res) => {
         if (!existUser) return res.status(403).send({ msg: "User does not exist" });
 
         // hashing password
-
         const salt = await bcrypt.genSalt(7);
         const randomPassword = shortid.generate();
         const password = await bcrypt.hash(randomPassword, salt);
@@ -120,7 +119,6 @@ exports.forgetPassword = async (req, res) => {
                 console.log(error);
                 res.status(403).send(error);
             } else {
-                // res.send("mail sent successfully");
                 res.send({ msg: 'New password has been sent to your email' });
             }
             });

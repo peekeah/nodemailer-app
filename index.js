@@ -13,10 +13,6 @@ app.use(cors());
 dotenv.config();
 
 
-// DB connection
-const URL = process.env.MONGO_URL;
-const PORT = 5001;
-
 // Endpoints
 app.get('/', async(req, res) => {
     res.send({title: 'Nodemailer task'});
@@ -27,6 +23,10 @@ app.post('/login', userController.login);
 app.put('/forgetpassword', userController.forgetPassword);
 app.post('/mailsend', auth.authenticateToken, userController.sendMail)
 
+
+// DB connection
+const URL = process.env.MONGO_URL;
+const PORT = 5001;
 
 mongoose.connect(URL, () => {
     app.listen(PORT, () => {
