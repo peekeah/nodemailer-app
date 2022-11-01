@@ -1,6 +1,8 @@
 const users = require("../schemas/userSchama");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodeMailer = require("nodemailer");
+const smtpTransport = require("nodemailer-smtp-transport");
 
 exports.signup = async (req, res) => {
     try {
@@ -39,6 +41,7 @@ exports.login = async (req, res) => {
     }
 };
 
+// #NOTE: functionality needs to change
 exports.forgetPassword = async (req, res) => {
     try {
         // user validation in db
@@ -62,8 +65,34 @@ exports.forgetPassword = async (req, res) => {
 
 exports.sendMail = async (req, res) => {
     try {
-        console.log(req.body)
-        res.send(req.body);
+        const transporter = nodeMailer.createTransport(
+            smtpTransport({
+                host: "smtp.gmail.com",
+                port: 465,
+                secure: true,
+                auth: {
+                    user: process.env.MAIL_USERNAME,
+                    pass: process.env.MAIL_PASSWORD,
+                },
+            })
+        );
+        
+        let mailOptions = {
+        from: process.env.MAIL_USERNAME, // sender address
+        to: req.body.email, // list of receivers
+        subject: req.body.subject || "", // Subject line
+        text: req.body.text || "", // plain text body
+        };
+        
+        transporter.sendMail(mailOptions, (error, info) => {
+            if(error) {
+                console.log(error);
+                res.status(403).send(error);
+            } else {
+                res.send('mail sent successfully');
+            }
+        });
+        
     } catch (err) {
         console.log(err);
         res.status(403).send(err)
