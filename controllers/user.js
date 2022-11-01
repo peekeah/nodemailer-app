@@ -2,6 +2,7 @@ const users = require("../schemas/userSchama");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodeMailer = require("nodemailer");
+const shortid = require("shortid");
 const smtpTransport = require("nodemailer-smtp-transport");
 
 exports.signup = async (req, res) => {
@@ -23,11 +24,11 @@ exports.login = async (req, res) => {
     try {
         // user validation in db
         const existUser = await users.findOne({ email: req.body.email });
-        if(!existUser) return res.status(403).send({ msg: "User does not exist" });
+        if (!existUser) return res.status(403).send({ msg: "User does not exist" });
 
         // validating password
         const isMatch = await bcrypt.compare(req.body.password, existUser.password);
-        if(!isMatch) return res.status(403).send({ msg: "Incorrect Password" });
+        if (!isMatch) return res.status(403).send({ msg: "Incorrect Password" });
 
         // generating token
         const token = await jwt.sign({ ...existUser }, process.env.JWT_SECRET, {
@@ -41,22 +42,23 @@ exports.login = async (req, res) => {
     }
 };
 
-// #NOTE: functionality needs to change
 exports.forgetPassword = async (req, res) => {
     try {
         // user validation in db
         const existUser = await users.findOne({ email: req.body.email });
-        if(!existUser) return res.status(403).send({ msg: "User does not exist" });
+        if (!existUser) return res.status(403).send({ msg: "User does not exist" });
 
         // hashing password
+
         const salt = await bcrypt.genSalt(7);
-        const password = await bcrypt.hash(req.body.newPassword, salt);
+        const randomPassword = shortid.generate();
+        const password = await bcrypt.hash(randomPassword, salt);
 
         // updaing password
         existUser.password = password;
         existUser.save();
 
-        res.send(existUser);
+        res.send({ newPassword: randomPassword });
     } catch (err) {
         console.log(err);
         res.status(403).send({ msg: err.message });
@@ -66,35 +68,34 @@ exports.forgetPassword = async (req, res) => {
 exports.sendMail = async (req, res) => {
     try {
         const transporter = nodeMailer.createTransport(
-            smtpTransport({
-                host: "smtp.gmail.com",
-                port: 465,
-                secure: true,
-                auth: {
-                    user: process.env.MAIL_USERNAME,
-                    pass: process.env.MAIL_PASSWORD,
-                },
-            })
+        smtpTransport({
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+            user: process.env.MAIL_USERNAME,
+            pass: process.env.MAIL_PASSWORD,
+            },
+        })
         );
-        
+
         let mailOptions = {
         from: process.env.MAIL_USERNAME, // sender address
         to: req.body.email, // list of receivers
         subject: req.body.subject || "", // Subject line
         text: req.body.text || "", // plain text body
         };
-        
+
         transporter.sendMail(mailOptions, (error, info) => {
-            if(error) {
-                console.log(error);
-                res.status(403).send(error);
-            } else {
-                res.send('mail sent successfully');
-            }
+        if (error) {
+            console.log(error);
+            res.status(403).send(error);
+        } else {
+            res.send("mail sent successfully");
+        }
         });
-        
     } catch (err) {
         console.log(err);
-        res.status(403).send(err)
+        res.status(403).send(err);
     }
-}
+};
