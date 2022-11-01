@@ -1,3 +1,4 @@
+
 # Nodemailer App
 ### Environment Variables
 | Name | Description |
@@ -21,6 +22,50 @@
 | POST | api/mailsend | To send mail to receiver | Yes |
 
 
-### Headers
-`access-token`: Auth key(JWT token)
+#### Create User
+* `POST /signup`: signup
+`Body`: 
+```
+{
+    "name": "your name",
+    "email": "yourname@example.com",
+    "password": "your password"
+}
+```
+
+#### Login
+* `POST /login`: Login
+`Body`: 
+```
+{
+    "email": "yourname@example.com",
+    "password": "your password"
+}
+```
+
+#### Reset Password
+* `PUT /forgetpassword`: Reset Password
+`Body`: 
+```
+{
+    "email": "yourname@example.com",
+}
+```
+
+#### Send Mail
+* `POST /mailsend`: Send Mail
+`Body`: 
+```
+{
+    "receiverEmail": "receiver_email@example.com",
+    "subject": "nail subject",
+    "text": "mail text"
+}
+```
+
+
+` Headers`:
+```
+access-token: Auth key(JWT token)
+```
 
