@@ -62,7 +62,7 @@
 ```
 {
     "receiverEmail": "receiver_email@example.com",
-    "subject": "nail subject",
+    "subject": "mail subject",
     "text": "mail text"
 }
 ```
