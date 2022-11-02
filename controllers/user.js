@@ -8,6 +8,10 @@ const smtpTransport = require("nodemailer-smtp-transport");
 
 exports.signup = async (req, res) => {
     try {
+        // user validation in db
+        const existUser = await users.findOne({ email: req.body.email });
+        if (existUser) return res.status(403).send({ msg: "User already exists" });
+
         // Hashing Password
         const salt = await bcrypt.genSalt(7);
         req.body.password = await bcrypt.hash(req.body.password, salt);
